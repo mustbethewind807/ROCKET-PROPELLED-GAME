@@ -1,4 +1,4 @@
-#include "newton.c"
+#include "newton.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <GL/glew.h>
@@ -6,5 +6,7 @@
 
 int main()
 {
-	return 0;
+  float* a = vectorCreate(5,5);
+
+  return 0;
 }
