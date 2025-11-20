@@ -2,13 +2,14 @@
 
 ### A GAME PROPELLED BY ROCKETS
 
-Featuring non-existent EPICNESS
+Featuring non-existent EPICNESS.  
+Currently in development, so don't expect the game to actually work.
 
 ### Compiling the game
 
 First, download the game.  
 If you want to clone the repo, clone it.  
-Then, follow the instructions for your OS
+Then, follow the instructions for your OS.
 
 #### Linux
 
