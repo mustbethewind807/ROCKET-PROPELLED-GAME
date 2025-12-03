@@ -1,5 +1,7 @@
 #ifndef NEWTON_H
 #define NEWTON_H
+#include <vector>
+#include <string>
 
 typedef struct
 {
@@ -26,8 +28,8 @@ typedef struct
   int collPriority;
   int displayPriority;
 
-  char labels[8][17];
-  char noColl[][17];
+  std::vector<std::string> labels;
+  std::vector<std::string> noColl;
 } Entity;
 
 typedef struct
