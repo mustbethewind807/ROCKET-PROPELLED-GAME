@@ -1,66 +1,82 @@
 #ifndef NEWTON_H
 #define NEWTON_H
+
+// c++ libraries
 #include <vector>
 #include <string>
 
+// glm libraries
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/vec2.hpp>
+
+using namespace glm;
+
+/**
+ * @brief An entity structure.
+ * 
+ * Is a physics body that can interact with other Entities through an Engine.
+ */
 typedef struct
 {
-  float pos[2];
-  float dest[2];
-  float lerpPower;
-} Camera;
+  vec2 pos;                        // The current position of the Entity.
+  vec2 prevPos;                    // The position of the Entity on the previous update cycle.
+  vec2 vel;                        // The current velocity of the Entity.
+  vec2 acc;                        // The force that will be applied on the next update cycle.
 
-typedef struct
-{
-  float pos[2];
-  float prevPos[2];
-  float vel[2];
-  float acc[2];
-  float maxVel;
-  float m;
-  float w;
-  float h;
-  float friction;
+  float maxVel;                    // The maximum velocity of the Entity.
+  float mass;                      // The mass of the Entity.
+  float w;                         // The width of the Entity.
+  float h;                         // The height of the Entity.
 
-  bool isStatic;
-  bool gravityAffected;
-  float restitution;
-  int collPriority;
-  int displayPriority;
+  float restitution;               // The "bounciness" of the Entity.
+  float friction;                  // The friction of the Entity.
 
-  std::vector<std::string> labels;
-  std::vector<std::string> noColl;
+  bool isStatic;                   // Can the Entity be moved?
+  bool gravityAffected;            // Is the Entity affected by gravity?
+  int collPriority;                // The priority of the Entity during collision checks. Higher = greater priority.
+  int displayPriority;             // The priority of the Entity during rendering. Higher = rendered first
+
+  std::vector<std::string> labels; // The tags of the Entity.
+  std::vector<std::string> noColl; // What tags to avoid while doing collsion checks.
 } Entity;
 
+/**
+ * @brief A camera object.
+ * 
+ * Is an object that is able to render Entities onto the screen using some math.
+ */
 typedef struct
 {
-  Entity entity;
-  char type;
+  vec2 pos;          // The current position of the Camera.
+  bool linked;       // Is the Camera linked to an active Entity?
+  Entity linkObject; // The Entity the Camera is linked to.
+  float lerpPower;   // How fast should the Camera move? 0 means the Camera does not move, while 1 means the Camera always snaps to the position of the linked Entity.
+} Camera;
+
+/**
+ * @brief An action for an Engine to perform.
+ * 
+ * Contains an Entity for the Engine to operate on, and a type for what the Engine should do.
+ */
+typedef struct
+{
+  Entity entity;    // The entity the Engine should operate on.
+  std::string type; // What the Engine should do with the Entity.
 } Action;
 
+/**
+ * @brief An engine object.
+ * 
+ * Is an Engine that operates on Entities to run a simulation of a world filled with physics bodies.
+ */
 typedef struct
 {
-  int maxEntities;
-  Entity entities[64]; // temporary i'll try to find a better way
-  Action actions[64]; // again temporary i'll find a better way
-  float gravity[2];
+  std::vector<Entity> Entities; // The Entities within the Engine's world
+  std::vector<Action> Actions;  // Special actions the Engine performs at the end of the next update cycle.
+  vec2 gravity;                 // A constant force applied onto all Entities inside the Engine each update cycle.
 } Engine;
-
-// Vector functions
-float* vectorCreate(float, float);
-float* vectorAdd(float*, float*);
-float* vectorSub(float*, float*);
-float* vectorMult(float*, float);
-float* vectorDiv(float*, float);
-float vectorMagSq(float*);
-float vectorMag(float*);
-float* vectorNormalize(float*);
-float vectorDot(float*, float*);
-float vectorCross(float*, float*);
-float* vectorLimit(float*, float);
-float* vectorLerp(float*, float*, float);
-float* vectorCopy(float*);
-void vectorSet(float*, float, float);
 
 // Camera functions
 void cameraLink(Camera, Entity);
@@ -69,8 +85,8 @@ void cameraUpdate(Camera);
 void cameraRender(Camera, Engine);
 
 // Entity functions
-void applyForce(Entity, float*);
-void checkCollide(Entity, Entity);
+void applyForce(Entity, vec2);
+bool checkCollide(Entity, Entity);
 void entityCollide(Entity, Entity);
 
 // Engine functions

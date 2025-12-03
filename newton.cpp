@@ -1,151 +1,164 @@
+#include "newton.hpp"
+
 #include <string>
 #include <cstdlib>
 #include <cstdio>
 #include <cmath>
 #include <vector>
 
+/* ---------- Camera functions ----------*/
 
-// Vector functions (my vectors are float arrays of size 2)
-
-float* vectorCreate(float x, float y)
+/**
+ * @brief Links an entity to a Camera.
+ * 
+ * @param cam the Camera to link to
+ * @param entity the Entity to link to the Camera
+ */
+void cameraLink(Camera cam, Entity e)
 {
-  float* out = (float*)malloc(2 * sizeof(float));
+  cam.linkObject = e;
+}
 
-  if (out == NULL)
+/**
+ * @brief Unlinks a Camera from entities.
+ * 
+ * @param cam the Camera to unlink
+ */
+void cameraUnlink(Camera cam)
+{
+  // unlink function
+}
+
+/**
+ * @brief Updates a Camera based on its linked Entity.
+ * 
+ * @param cam the Camera to update
+ */
+void cameraUpdate(Camera cam)
+{
+  // lerping stuff idk
+}
+
+/**
+ * @brief Renders entities inside an Engine using a Camera.
+ * 
+ * @param cam the Camera to use
+ * @param engine the Engine whose entities will be used
+ */
+void cameraRender(Camera cam, Engine engine)
+{
+  // oh god
+}
+
+/* ---------- Entity functions ----------*/
+
+/**
+ * @brief Apply a force to an entity.
+ * 
+ * @param entity the Entity to apply a force to
+ * @param f the force to apply
+ */
+void applyForce(Entity entity, vec2 f)
+{
+  vec2 a = f * 0.5f;
+  entity.acc += a;
+}
+
+/**
+ * @brief Checks to see if 2 Entities are colliding.
+ * 
+ * @param a the first Entity
+ * @param b the second Entity
+ * 
+ * @return bool Did `a` and `b` collide?
+ */
+bool checkCollide(Entity a, Entity b)
+{
+  return (
+    a.pos.x + a.w / 2 > b.pos.x - b.w / 2 &&
+    a.pos.x - a.w / 2 < b.pos.x + b.w / 2 &&
+    a.pos.y + a.h / 2 > b.pos.y - b.h / 2 &&
+    a.pos.y - a.h / 2 < b.pos.y + b.h / 2
+  );
+}
+
+/**
+ * @brief Resolves collisions between 2 Entities.
+ * 
+ * @param a the first Entity
+ * @param b the second Entity
+ */
+void entityCollide(Entity a, Entity b)
+{
+  // collision
+}
+
+/* ---------- Engine functions ----------*/
+
+/**
+ * @brief Updates all entities within an Engine.
+ * 
+ * @param engine the engine to update
+ */
+void updateEngine(Engine engine)
+{
+  // update engine
+}
+
+/**
+ * @brief Add an Action to an Engine's action stack.
+ * 
+ * @param engine the Engine to add an Action to
+ * @param action the Action to add
+ */
+void addAction(Engine engine, Action action)
+{
+  engine.Actions.push_back(action);
+}
+
+/**
+ * @brief Resolves all actions in an Engine's action stack.
+ * 
+ * @param engine the Engine to update
+ */
+void runActions(Engine engine)
+{
+  for (const Action& action : engine.Actions)
   {
-	printf("Memory allocation failed");
-	exit(EXIT_FAILURE);
+    // run actions
   }
-
-  out[0] = x;
-  out[1] = y;
-
-  return out;
 }
 
-float* vectorCopy(float* a)
+/**
+ * @brief Removes all actions in an Engine's action stack.
+ * 
+ * @param engine the Engine to clear actions for
+ */
+void clearActions(Engine engine)
 {
-  float* out = (float*)malloc(2 * sizeof(float));
-  out[0] = a[0];
-  out[1] = a[1];
-  return out;
+  engine.Actions.clear();
+  std::vector<Action>().swap(engine.Actions);
 }
 
-float* vectorAdd(float* a, float* b)
+/**
+ * @brief Adds an Entity to an Engine via Actions.
+ * 
+ * @param engine the Engine to add the Entity to
+ * @param entity the Entity to add
+ */
+void addEntity(Engine engine, Entity entity)
 {
-  float* out = (float*)malloc(2 * sizeof(float));
-
-  if (out == NULL)
-  {
-	printf("Memory allocation failed");
-	exit(EXIT_FAILURE);
-  }
-
-  out[0] = a[0] + b[0];
-  out[1] = a[0] + b[1];
-
-  return out;
+  engine.Entities.push_back(entity);
 }
 
-float* vectorSub(float* a, float* b)
+/**
+ * @brief Removes an Entity from an Engine via Actions.
+ * 
+ * @param engine the Engine to use
+ * @param entity the Entity to remove
+ */
+void removeEntity(Engine engine, Entity entity)
 {
-  float* out = (float*)malloc(2 * sizeof(float));
-
-  if (out == NULL)
-  {
-	printf("Memory allocation failed");
-	exit(EXIT_FAILURE);
-  }
-
-  out[0] = a[0] - b[0];
-  out[1] = a[1] - b[1];
-
-  return out;
+  // remove entity
 }
 
-float* vectorMult(float* a, float n)
-{
-  float* out = (float*)malloc(2 * sizeof(float));
-
-  if (out == NULL)
-  {
-	printf("Memory allocation failed");
-	exit(EXIT_FAILURE);
-  }
-
-  out[0] = a[0] * n;
-  out[1] = a[1] * n;
-
-  return out;
-}
-
-float* vectorDiv(float* a, float n)
-{
-  float* out = (float*)malloc(2 * sizeof(float));
-
-  if (out == NULL)
-  {
-	printf("Memory allocation failed");
-	exit(EXIT_FAILURE);
-  }
-
-  out[0] = a[0] / n;
-  out[1] = a[1] / n;
-
-  return out;
-}
-
-float vectorMagSq(float* a)
-{
-  float out = a[0] * a[0] + a[1] * a[1];
-
-  return out;
-}
-
-float vectorMag(float* a)
-{
-  return sqrtf(vectorMagSq(a));
-}
-
-float* vectorNormalize(float* a)
-{
-  float* b = vectorCopy(a);
-  float m = vectorMag(a);
-  float* c = vectorDiv(b, m);
-  free(b);
-  b = NULL;
-  return c;
-}
-
-float vectorDot(float* a, float* b)
-{
-  return a[0] * b[0] + a[1] * b[1];
-}
-
-float vectorCross(float* a, float* b)
-{
-  return a[0] * b[1] - a[1] * b[0];
-}
-
-float* vectorLimit(float* a, float n)
-{
-  if (vectorMagSq(a) < n * n) return vectorCopy(a);
-
-  float* out = vectorCopy(a);
-  out = vectorNormalize(out);
-  out = vectorMult(out, n);
-  return out;
-}
-
-float* vectorLerp(float* a, float* b, float t)
-{
-  float* c = vectorSub(b, a);
-  c = vectorMult(c, t);
-  return vectorAdd(c, a);
-}
-
-void vectorSet(float* a, float x, float y)
-{
-  a[0] = x;
-  a[1] = y;
-}
