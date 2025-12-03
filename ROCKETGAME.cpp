@@ -6,33 +6,40 @@
 // standard libraries (i use the old c libraries because i forget std:: ones exist)
 #include <cstdio>
 #include <cstdlib>
+
+// c++ libraries
 #include <iostream>
 #include <string>
 #include <vector>
+
+// glm libraries
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 // glad and glfw for graphics
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-// error callback function
-void error_callback(int error, const char* description) {
-    std::cerr << "GLFW Error " << error << ": " << description << "\n";
-}
+const char* vertexShaderSource = "#version 330 core\n"
+  "layout (location = 0) in vec3 aPos;\n"
+  "void main()\n"
+  "{\n"
+  "  gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+  "}\0";
 
-// other functions
+const char* fragmentShaderSource = "#version 330 core\n"
+  "out vec4 FragColor;\n"
+  "void main()\n"
+  "{\n"
+  "  FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+  "}\0";
+// misc functions
 void framebuffer_size_callback(GLFWwindow* window, int width, int height); // window resize callback
+void processInput(GLFWwindow *window); // process inputs
 
 int main()
 {
-  // Example usage of std::vector to ensure C++23 features are supported
-  std::vector<float> a {5, 5};
-
-  // example output to verify program runs
-  std::cout << "Hello, Rocket Game!\n";
-
-  // make window wow
-  glfwSetErrorCallback(error_callback);
-
   // make window
   if(!glfwInit())
   {
@@ -66,9 +73,63 @@ int main()
   glViewport(0, 0, 800, 600);
   glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
+
+
+
+  // big important stuff
+  float vertices[] = {
+    -0.5f, -0.5f, 0.0f,
+     0.5f, -0.5f, 0.0f,
+     0.0f,  0.5f, 0.0f
+  };
+
+  unsigned int VAO;
+  glGenVertexArrays(1, &VAO);
+  glBindVertexArray(VAO);
+
+  unsigned int VBO;
+  glGenBuffers(1, &VBO);
+  glBindBuffer(GL_ARRAY_BUFFER, VBO);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+  unsigned int vertexShader;
+  vertexShader = glCreateShader(GL_VERTEX_SHADER);
+  glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+  glCompileShader(vertexShader);
+
+  unsigned int fragmentShader;
+  fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+  glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+  glCompileShader(fragmentShader);
+
+  unsigned int shaderProgram;
+  shaderProgram = glCreateProgram();
+  glAttachShader(shaderProgram, vertexShader);
+  glAttachShader(shaderProgram, fragmentShader);
+  glLinkProgram(shaderProgram);
+
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+  glEnableVertexAttribArray(0);
+  glDeleteShader(vertexShader);
+  glDeleteShader(fragmentShader);
+
+  
+
   // main loop
-  while(!glfwWindowShouldClose(window))
+  while (!glfwWindowShouldClose(window))
   {
+    // process inputs
+    processInput(window);
+
+    // rendering stuff
+    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glUseProgram(shaderProgram);
+    glBindVertexArray(VAO);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // buffer swaping
     glfwSwapBuffers(window);
     glfwPollEvents();
   }
@@ -81,4 +142,10 @@ int main()
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
   glViewport(0, 0, width, height);
-}  
+}
+
+void processInput(GLFWwindow *window)
+{
+  if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+    glfwSetWindowShouldClose(window, true);
+}
