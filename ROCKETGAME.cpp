@@ -14,6 +14,11 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+// error callback function
+void error_callback(int error, const char* description) {
+    std::cerr << "GLFW Error " << error << ": " << description << "\n";
+}
+
 int main()
 {
   // Example usage of std::vector to ensure C++23 features are supported
@@ -22,8 +27,16 @@ int main()
   // example output to verify program runs
   std::cout << "Hello, Rocket Game!\n";
 
+  // make window wow
+  glfwSetErrorCallback(error_callback);
+
   // make window
-  glfwInit();
+  if(!glfwInit())
+  {
+    std::cout << "GLFW failed to initialize";
+    return 1;
+  }
+
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -35,6 +48,14 @@ int main()
     return 1;
   }
   glfwMakeContextCurrent(window);
+
+  if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+  {
+    std::cout << "Failed to initialize GLAD\n";
+    return 1;
+  }
+
+  glViewport(0, 0, 800, 600);
 
   return 0;
 }
