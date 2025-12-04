@@ -4,6 +4,10 @@
 #include <vector>
 #include <cmath>
 #include <iostream>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/vec2.hpp>
 
 /**
  * @brief Links an entity to a Camera.
@@ -55,9 +59,9 @@ void newton::cameraRender(Camera cam, Engine engine)
  * @param entity the Entity to apply a force to
  * @param f the force to apply
  */
-void newton::applyForce(Entity entity, vec2 f)
+void newton::applyForce(Entity entity, glm::vec2 f)
 {
-  vec2 a = f * 0.5f;
+  glm::vec2 a = f * 0.5f;
   entity.acc += a;
 }
 
