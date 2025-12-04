@@ -1,12 +1,9 @@
 #include "newton.hpp"
 
 #include <string>
-#include <cstdlib>
-#include <cstdio>
-#include <cmath>
 #include <vector>
-
-/* ---------- Camera functions ----------*/
+#include <cmath>
+#include <iostream>
 
 /**
  * @brief Links an entity to a Camera.
@@ -14,17 +11,19 @@
  * @param cam the Camera to link to
  * @param entity the Entity to link to the Camera
  */
-void cameraLink(Camera cam, Entity e)
+void newton::cameraLink(Camera cam, Entity e)
 {
   cam.linkObject = e;
 }
 
 /**
- * @brief Unlinks a Camera from entities.
+ * @brief Unlinks a Camera from active entities.
+ * 
+ * Will generate an inactive entity used to track the Camera's destination
  * 
  * @param cam the Camera to unlink
  */
-void cameraUnlink(Camera cam)
+void newton::cameraUnlink(Camera cam)
 {
   // unlink function
 }
@@ -34,7 +33,7 @@ void cameraUnlink(Camera cam)
  * 
  * @param cam the Camera to update
  */
-void cameraUpdate(Camera cam)
+void newton::cameraUpdate(Camera cam)
 {
   // lerping stuff idk
 }
@@ -45,12 +44,10 @@ void cameraUpdate(Camera cam)
  * @param cam the Camera to use
  * @param engine the Engine whose entities will be used
  */
-void cameraRender(Camera cam, Engine engine)
+void newton::cameraRender(Camera cam, Engine engine)
 {
   // oh god
 }
-
-/* ---------- Entity functions ----------*/
 
 /**
  * @brief Apply a force to an entity.
@@ -58,7 +55,7 @@ void cameraRender(Camera cam, Engine engine)
  * @param entity the Entity to apply a force to
  * @param f the force to apply
  */
-void applyForce(Entity entity, vec2 f)
+void newton::applyForce(Entity entity, vec2 f)
 {
   vec2 a = f * 0.5f;
   entity.acc += a;
@@ -72,7 +69,7 @@ void applyForce(Entity entity, vec2 f)
  * 
  * @return bool Did `a` and `b` collide?
  */
-bool checkCollide(Entity a, Entity b)
+bool newton::checkCollide(Entity a, Entity b)
 {
   return (
     a.pos.x + a.w / 2 > b.pos.x - b.w / 2 &&
@@ -88,19 +85,17 @@ bool checkCollide(Entity a, Entity b)
  * @param a the first Entity
  * @param b the second Entity
  */
-void entityCollide(Entity a, Entity b)
+void newton::entityCollide(Entity a, Entity b)
 {
   // collision
 }
-
-/* ---------- Engine functions ----------*/
 
 /**
  * @brief Updates all entities within an Engine.
  * 
  * @param engine the engine to update
  */
-void updateEngine(Engine engine)
+void newton::updateEngine(Engine engine)
 {
   // update engine
 }
@@ -111,7 +106,7 @@ void updateEngine(Engine engine)
  * @param engine the Engine to add an Action to
  * @param action the Action to add
  */
-void addAction(Engine engine, Action action)
+void newton::addAction(Engine engine, Action action)
 {
   engine.Actions.push_back(action);
 }
@@ -121,7 +116,7 @@ void addAction(Engine engine, Action action)
  * 
  * @param engine the Engine to update
  */
-void runActions(Engine engine)
+void newton::runActions(Engine engine)
 {
   for (const Action& action : engine.Actions)
   {
@@ -134,7 +129,7 @@ void runActions(Engine engine)
  * 
  * @param engine the Engine to clear actions for
  */
-void clearActions(Engine engine)
+void newton::clearActions(Engine engine)
 {
   engine.Actions.clear();
   std::vector<Action>().swap(engine.Actions);
@@ -146,7 +141,7 @@ void clearActions(Engine engine)
  * @param engine the Engine to add the Entity to
  * @param entity the Entity to add
  */
-void addEntity(Engine engine, Entity entity)
+void newton::addEntity(Engine engine, Entity entity)
 {
   engine.Entities.push_back(entity);
 }
@@ -157,7 +152,7 @@ void addEntity(Engine engine, Entity entity)
  * @param engine the Engine to use
  * @param entity the Entity to remove
  */
-void removeEntity(Engine engine, Entity entity)
+void newton::removeEntity(Engine engine, Entity entity)
 {
   // remove entity
 }
