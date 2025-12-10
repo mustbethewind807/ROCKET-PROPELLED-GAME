@@ -1,7 +1,7 @@
 // ROCKETGAME.cpp: Contains the main function and most gameplay stuff
 
 // newton is my crappy game engine
-#include "newton.hpp"
+#include "newton/newton.hpp"
 
 // c++ libraries
 #include <iostream>
